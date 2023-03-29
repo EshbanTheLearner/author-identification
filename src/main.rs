@@ -63,3 +63,20 @@ impl SpookyAuthor {
         }
     }
 }
+
+fn push_training_data_to_file(train_data: &[SpookyAuthor], filename: &str) -> Result<(), Box<dyn Error>> {
+    let mut f = File::create(filename)?;
+    for item in train_data {
+        writeln!(f, "{} {}", item.into_labels(), item.into_tokens())?;
+    }
+    Ok(())
+}
+
+fn push_test_data_to_file(test_data: &[SpookyAuthor], filename: &str) -> Result<(), Box<dyn Error>> {
+    let mut f = File::create(filename)?;
+    for item in test_data {
+        writeln!(f, "{}", item.into_tokens())?;
+    }
+    Ok(())
+}
+
