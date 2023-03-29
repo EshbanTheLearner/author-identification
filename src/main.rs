@@ -20,7 +20,7 @@ use std::collections::HashSet;
 use stopwords::{ Spark, Language, Stopwords };
 use itertools::Itertools;
 use vtext::tokenize::VTextTokenizer;
-use rust_stemmer::{ Algorithm, Stemmer };
+use rust_stemmers::{ Algorithm, Stemmer };
 
 #[derive(Debug, Deserialize)]
 pub struct SpookyAuthor {
@@ -52,5 +52,14 @@ impl SpookyAuthor {
         tokens.retain(|s| !stops.contains(s));
 
         tokens.iter().join(" ")
+    }
+
+    fn into_labels(&self) -> String {
+        match self.author.as_str() {
+            "EAP" => String::from("__label__EAP"),
+            "HPL" => String::from("__label__HPL"),
+            "MWS" => String::from("__label__MWS"),
+            l => panic!("Unable to parse the target. Some other target passed. {:?}", l),
+        }
     }
 }
