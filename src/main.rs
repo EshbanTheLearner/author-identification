@@ -22,6 +22,10 @@ use itertools::Itertools;
 use vtext::tokenize::VTextTokenizer;
 use rust_stemmers::{ Algorithm, Stemmer };
 
+const TRAIN_FILE: &str = "data.train";
+const TEST_FILE: &str = "data.test";
+const MODEL: &str = "model.bin";
+
 #[derive(Debug, Deserialize)]
 pub struct SpookyAuthor {
     id: String,
