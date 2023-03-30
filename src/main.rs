@@ -109,7 +109,23 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut ft_model = FastText::new();
     ft_model.train(&args).unwrap();
 
-    
+    let preds = test_data.iter().map(|x| ft_model.predict(x.text.as_str(), 1, 0.0));
+    let test_labels = test_data.iter().map(|x| x.into_labels());
+    let mut hits = 0;
+    let mut correct_hits = 0;
+    let preds_clone = preds.clone();
+    for (predicted, actual) in preds.zip(test_labels) {
+        let predicted = predicted?;
+        let predicted = &predicted[0];
+        if predicted.clone().label == actual {
+            correct_hits += 1;
+        }
+        hits += 1;
+    }
+
+    assert_eq!(hits, preds_clone.len());
+    println!("Accuracy={} ({}/{} correct)", correct_hits as f32 / hits as f32, correct_hits, preds_clone.len());
+    ft_model.save_model(MODEL);
 
     Ok(())
 }
