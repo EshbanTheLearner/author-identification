@@ -84,6 +84,32 @@ fn push_test_data_to_file(test_data: &[SpookyAuthor], filename: &str) -> Result<
     Ok(())
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut rdr = csv::Reader::from_reader(io::stdin());
+    let mut data = Vec::new();
+    for result in rdr.deserialize() {
+        let r: SpookyAuthor = result?;
+        data.push(r);
+    }
+    data.shuffle(&mut thread_rng());
 
+    let test_size: f32 = 0.2;
+    let test_size: f32 = data.len() as f32 * test_size;
+    let test_size = test_size.round() as usize;
+
+    let (test_data, train_data) = data.split_at(test_size);
+    push_training_data_to_file(train_data.to_owned(), TRAIN_FILE)?;
+    push_test_data_to_file(test_data.to_owned(), TEST_FILE)?;
+
+    let mut args = Args::new();
+    args.set_input(TRAIN_FILE);
+    args.set_model(ModelName::SUP);
+    args.set_loss(LossName::SOFTMAX);
+
+    let mut ft_model = FastText::new();
+    ft_model.train(&args).unwrap();
+
+    
+
+    Ok(())
 }
