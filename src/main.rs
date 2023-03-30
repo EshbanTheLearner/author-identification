@@ -80,3 +80,6 @@ fn push_test_data_to_file(test_data: &[SpookyAuthor], filename: &str) -> Result<
     Ok(())
 }
 
+fn main() {
+
+}
