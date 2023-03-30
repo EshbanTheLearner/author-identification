@@ -129,3 +129,21 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use csv;
+
+    #[test]
+    fn test_spooky_author() {
+        let data = "\"id\",\"text\",\"author\"\n\"id26305\",\"This process, however, afforded me no means of ascertaining the dimensions of my dungeon; as I might make its circuit, and return to the point whence I set out, without being aware of the fact; so perfectly uniform seemed the wall.\",\"EAP\"\n\"id17569\",\"It never once occurred to me that the fumbling might be a mere mistake.\",\"HPL\"";
+        let mut rdr = csv::Reader::from_reader(data.as_bytes());
+        let mut data = Vec::new();
+        for result in rdr.deserialize() {
+            let r: SpookyAuthor = result.unwrap();
+            data.push(r);
+        }
+        assert_eq!(data[0].into_training_string(), "__label__EAP This process, however, afforded me no means of ascertaining the dimensions of my dungeon; as I might make its circuit, and return to the point whence I set out, without being aware of the fact; so perfectly uniform seemed the wall.");
+    }
+}
