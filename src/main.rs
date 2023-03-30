@@ -16,10 +16,10 @@ use rand::seq::SliceRandom;
 
 use fasttext::{ FastText, Args, ModelName, LossName };
 use stopwords;
+use itertools::Itertools;
 use std::collections::HashSet;
 use stopwords::{ Spark, Language, Stopwords };
-use itertools::Itertools;
-use vtext::tokenize::VTextTokenizer;
+use vtext::tokenize::{ VTextTokenizerParams, Tokenizer };
 use rust_stemmers::{ Algorithm, Stemmer };
 
 const TRAIN_FILE: &str = "data.train";
@@ -36,7 +36,7 @@ pub struct SpookyAuthor {
 impl SpookyAuthor {
     pub fn into_tokens(&self) -> String {
         let lc_text = self.text.to_lowercase();
-        let tok = VTextTokenizer::new("en");
+        let tok = VTextTokenizerParams::default().lang("en").build().unwrap();
         let tokens: Vec<&str> = tok.tokenize(lc_text.as_str()).collect();
         let en_stemmer = Stemmer::create(Algorithm::English);
         
